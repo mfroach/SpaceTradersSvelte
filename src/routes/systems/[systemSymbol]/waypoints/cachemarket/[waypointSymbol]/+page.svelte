@@ -1,15 +1,23 @@
 <script lang="ts">
 	import type { PageProps } from '../../../$types';
 	import { Button } from '$lib/components/ui/button/index.js';
-	import * as Cache from '$lib/cache.svelte';
+	import { fetchMarket } from '$lib/api';
+	import { getCached, invalidateCache } from '$lib/cache.svelte';
 	import { page } from '$app/state';
 	let { data }: PageProps = $props();
-	let cachedData = $derived(Cache.getCachedMarket(1));
 	let systemSymbol: string = page.params.systemSymbol!;
 	let waypointSymbol: string = page.params.waypointSymbol!;
+	let cachedData = $state(null);
+	
+	async function refresh() {
+		invalidateCache('market', systemSymbol, waypointSymbol);
+		cachedData = await fetchMarket(systemSymbol, waypointSymbol);
+	}
+	
+	$effect(() => {
+		cachedData = getCached('market', systemSymbol, waypointSymbol);
+	});
 </script>
 
-<Button onclick={async () => {
-	Cache.setCachedMarket(1, await Cache.getMarket(systemSymbol, waypointSymbol))
-	}}>Refresh</Button>
+<Button onclick={refresh}>Refresh</Button>
 <pre>{JSON.stringify(cachedData, null, 2)}</pre>
