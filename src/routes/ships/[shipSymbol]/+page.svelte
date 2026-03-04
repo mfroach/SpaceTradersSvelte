@@ -192,6 +192,9 @@
                 <a href="/ships/{ship.symbol}/navigate">
                     <Button>Browse Waypoints</Button>
                 </a>
+                <a href="/ships/{ship.symbol}/route">
+                    <Button>Route Planner</Button>
+                </a>
             </div>
             {#if ship.nav.status === 'DOCKED'}
                 <p class="text-sm text-amber-600">Ship must be in orbit to navigate</p>
